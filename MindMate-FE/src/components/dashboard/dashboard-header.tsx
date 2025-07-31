@@ -9,8 +9,6 @@ import { useAuth } from "@/context/AuthProvider"
 interface DashboardHeaderProps {
   user: {
     name: string
-    lastMood?: { emoji: string; value: number; date: Date }
-    streak: number
   }
 }
 

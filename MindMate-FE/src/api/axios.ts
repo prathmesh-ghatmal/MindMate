@@ -4,8 +4,11 @@ import { store } from "@/redux/store";
 import { logout } from "@/redux/slices/authSlice";
 import { toast } from "react-hot-toast"
 
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const api = axios.create({
-  baseURL: "https://your-api.com",
+  baseURL: API_BASE_URL,
 });
 
 // REQUEST: attach token
@@ -37,7 +40,7 @@ api.interceptors.response.use(
       try {
         const refresh_token = localStorage.getItem("refresh_token");
 
-        const res = await axios.post("https://your-api.com/refresh", {
+        const res = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refresh_token,
         });
 

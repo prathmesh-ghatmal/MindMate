@@ -1,23 +1,54 @@
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import DashboardHeader from "@/components/dashboard/dashboard-header"
 import MoodTracker from "@/components/dashboard/mood-tracker"
 import QuickJournal from "@/components/dashboard/quick-journal"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, BookOpen, Lightbulb, User } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { getAllMoodLogs, getLatestMoodLog } from "@/services/moodService"
+import { fetchUserProfile } from "@/services/authService"
 
 
 // Mock data - to be replaced with backend integration
-const mockUser = {
-  name: "Alex",
-  lastMood: { emoji: "😊", value: 4, date: new Date() },
-  streak: 7,
-}
+// const mockUser = {
+//   name: "Alex",
+//   lastMood: { emoji: "😊", value: 4, date: new Date() },
+//   streak: 7,
+// }
 
 export default function Dashboard() {
+  const moodEmojis = ["😢", "😕", "😐", "😊", "😄"]
   const [currentMood, setCurrentMood] = useState<{ emoji: string; value: number } | null>(null)
+  const [name, setName] = useState<string>("")
+  const [lastMood, setLastMood] = useState<{ emoji: string; value: number; date: Date } | null>(null)
+  const [streak, setStreak] = useState<number | null>(null)
   const navigate = useNavigate()
+  
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+        const user=await fetchUserProfile()
+        setName(user.first_name)
+      const latest = await getLatestMoodLog()
+      setLastMood({
+        emoji: moodEmojis[latest.mood - 1],
+        value: latest.mood,
+        date: new Date(latest.created_at),
+      })
+
+      const allLogs = await getAllMoodLogs()
+      const uniqueDays = new Set(
+        allLogs.map((log: any) => new Date(log.created_at).toDateString())
+      )
+      setStreak(uniqueDays.size)
+    } catch (err) {
+      console.error("Could not fetch mood data", err)
+    }
+  }
+
+  fetchData()
+}, [])
 
   const quickActions = [
     {
@@ -52,7 +83,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50">
-      <DashboardHeader user={mockUser} />
+      <DashboardHeader user={{name}} />
 
       <div className="container mx-auto px-4 py-8">
         <motion.div
@@ -62,7 +93,7 @@ export default function Dashboard() {
         >
           {/* Left Column - Mood & Journal */}
           <div className="lg:col-span-2 space-y-6">
-            <MoodTracker currentMood={currentMood} onMoodChange={setCurrentMood} lastMood={mockUser.lastMood} />
+            <MoodTracker currentMood={currentMood} onMoodChange={setCurrentMood} lastMood={lastMood} />
             <QuickJournal />
           </div>
 
@@ -111,7 +142,7 @@ export default function Dashboard() {
               className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg"
             >
               <h3 className="text-lg font-semibold mb-2">Daily Streak 🔥</h3>
-              <div className="text-3xl font-bold mb-1">{mockUser.streak} days</div>
+              <div className="text-3xl font-bold mb-1">{streak} days</div>
               <p className="text-purple-100 text-sm">Keep up the great work!</p>
             </motion.div>
           </div>
