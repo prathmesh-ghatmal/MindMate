@@ -6,6 +6,7 @@ import type { RootState, AppDispatch } from "@/redux/store"
 import type { User } from "@/types/User"
 import { fetchUserProfile, loginUser, registerUser } from "@/services/authService"
 import { toast } from "react-hot-toast"
+import { useNavigate } from "react-router-dom" 
 
 interface AuthContextType {
   user: User | null
@@ -20,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch<AppDispatch>()
   const user = useSelector((state: RootState) => state.auth.user)
-
+  const navigate = useNavigate()
   const login = async (email: string, password: string) => {
     try {
       const { access_token, refresh_token } = await loginUser(email, password)
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("access_token")
     localStorage.removeItem("refresh_token")
     dispatch(logout())
+    navigate("/")
     toast.success("Logged out successfully.")
   }
 
