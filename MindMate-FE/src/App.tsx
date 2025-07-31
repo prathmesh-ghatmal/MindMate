@@ -6,6 +6,7 @@ import "./index.css"
 import ProtectedRoute from "@/components/ProtectedRoute" // For private routes
 import PublicRoute from "./components/PublicRoute"
 import Dashboard from "./pages/Dashboard"
+import ChatPage from "./pages/Chat"
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+         <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
         {/* Example Private Route (future use) */}
         {/* 
         <Route
