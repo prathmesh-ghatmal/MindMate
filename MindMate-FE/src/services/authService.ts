@@ -1,11 +1,11 @@
 // src/services/authService.ts
-import axios from "axios"
+import api from "@/api/axios"; 
 import type { User } from "@/types/User"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export async function loginUser(email: string, password: string): Promise<User> {
-  const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+  const response = await api.post(`${API_BASE_URL}/auth/login`, {
     email,
     password,
   })
@@ -17,7 +17,7 @@ export async function registerUser(
   password: string,
   first_name: string
 ): Promise<User> {
-  const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+  const response = await api.post(`${API_BASE_URL}/auth/register`, {
     email,
     password,
     first_name,
@@ -27,11 +27,8 @@ export async function registerUser(
   return response.data.user
 }
 
-export const fetchUserProfile = async (token: string) => {
-  const res = await axios.get(`${API_BASE_URL}/user/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export const fetchUserProfile = async () => {
+  const res = await api.get(`${API_BASE_URL}/user/me`)
   return res.data
+  
 }

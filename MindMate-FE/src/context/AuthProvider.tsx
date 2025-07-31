@@ -22,54 +22,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.auth.user)
 
   const login = async (email: string, password: string) => {
-  try {
-    
-    const { access_token, refresh_token } = await loginUser(email, password)
-    if (access_token) {
-      
-  const userProfile = await fetchUserProfile(access_token);
-  const user = {
-      ...userProfile,
-      access_token,
-      refresh_token,
-    }
+    try {
+      const { access_token, refresh_token } = await loginUser(email, password)
 
-    dispatch(loginSuccess(user))
-    toast.success("Login successful!")
-} else {
-  // handle missing token case (e.g., throw error or redirect)
-  console.error("Access token is missing.");
-}
+      if (access_token && refresh_token) {
+        localStorage.setItem("access_token", access_token)
+        localStorage.setItem("refresh_token", refresh_token)
 
-    
-  } catch (err: any) {
-    if (err?.response?.status === 403 && err?.response?.data?.detail === "Please verify your email first") {
-      toast.error("Please verify your email before logging in.")
-    } else {
-      toast.error("Login failed. Please check your credentials.")
+        // fetchUserProfile uses token from interceptor
+        const userProfile = await fetchUserProfile()
+        const user = {
+          ...userProfile,
+          access_token,
+          refresh_token,
+        }
+
+        dispatch(loginSuccess(user))
+        toast.success("Login successful!")
+      } else {
+        console.error("Access token is missing.")
+        toast.error("Unexpected error during login. Try again.")
+      }
+    } catch (err: any) {
+      if (err?.response?.status === 403 && err?.response?.data?.detail === "Please verify your email first") {
+        toast.error("Please verify your email before logging in.")
+      } else {
+        toast.error("Login failed. Please check your credentials.")
+      }
     }
   }
-}
-
 
   const signup = async (email: string, password: string, name: string) => {
-  try {
-    await registerUser(email, password, name)
-    toast.success("Registration successful! Please check your email to verify your account.")
-  } catch (err: any) {
-    if (
-      err?.response?.status === 400 &&
-      err?.response?.data?.detail === "Email already registered"
-    ) {
-      toast.error("This email is already registered. Please login or use another email.")
-    } else {
-      toast.error("Registration failed. Please try again.")
+    try {
+      await registerUser(email, password, name)
+      toast.success("Registration successful! Please check your email to verify your account.")
+    } catch (err: any) {
+      if (
+        err?.response?.status === 400 &&
+        err?.response?.data?.detail === "Email already registered"
+      ) {
+        toast.error("This email is already registered. Please login or use another email.")
+      } else {
+        toast.error("Registration failed. Please try again.")
+      }
     }
   }
-}
 
   const socialLogin = async (provider: string) => {
-    // Still a mock — unless your backend has OAuth integration
+    // Mock logic only unless backend OAuth is implemented
     const mockUser: User = {
       id: "social-1",
       email: `user@${provider}.com`,
@@ -79,7 +79,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     dispatch(loginSuccess(mockUser))
   }
 
-  const handleLogout = () => dispatch(logout())
+  const handleLogout = () => {
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("refresh_token")
+    dispatch(logout())
+    toast.success("Logged out successfully.")
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, signup, socialLogin, logout: handleLogout }}>
