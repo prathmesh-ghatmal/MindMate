@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import auth,user
+from app.api.routes import auth,user,mood
 from app.db.database import Base, engine
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -57,3 +57,4 @@ async def custom_validation_exception_handler(request, exc: RequestValidationErr
 
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(mood.router)
