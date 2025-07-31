@@ -1,0 +1,77 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# FastAPI specific
+app/__pycache__/
+app/*.pyc
+app/*.pyo
+app/.pytest_cache/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.pytest_cache/
+
+# Logs and databases
+*.log
+test.db
+*.sqlite3
+*.sqlite3-journal
+
+# IDE configs
+.idea/
+.vscode/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+
+# Misc
+*.zip
+*.tar.gz
+*.bak
+*.swp
+.DS_Store
+
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Alembic runtime stuff, if you ever generate logs or local metadata (not common)
+alembic/*.pyc
+alembic/__pycache__/
+
+# Ignore database file (only if you're using SQLite for dev)
+*.db
+
+# Ignore virtual environment
+venv/
+.env/
+
