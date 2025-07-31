@@ -7,6 +7,7 @@ import PublicRoute from "./components/PublicRoute"
 import Dashboard from "./pages/Dashboard"
 import ChatPage from "./pages/Chat"
 import JournalPage from "./pages/Journal"
+import ResourcesPage from "./pages/Resources"
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
          <Route path="/journal" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />
+         <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
         {/* Example Private Route (future use) */}
         {/* 
         <Route
