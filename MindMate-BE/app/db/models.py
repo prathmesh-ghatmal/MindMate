@@ -80,7 +80,7 @@ class JournalEntry(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=False)
-    mood = Column(Integer, nullable=False)  # 1 to 5
+    mood = Column(Integer, nullable=True)  # 1 to 5
     tags = Column(ARRAY(String), default=[])
 
     created_at = Column(TIMESTAMP, default=datetime.utcnow)

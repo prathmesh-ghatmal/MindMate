@@ -5,7 +5,7 @@ from datetime import datetime
 class JournalEntryBase(BaseModel):
     title: str
     description: str
-    mood: int = Field(..., ge=1, le=5)
+    mood: Optional[int] = Field(None, ge=1, le=5)
     tags: Optional[List[str]] = []
 
 class JournalEntryCreate(JournalEntryBase):
