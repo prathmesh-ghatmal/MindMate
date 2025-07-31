@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import auth,user,mood,journal
+from app.api.routes import auth,user,mood,journal,chat,conversations
 from app.db.database import Base, engine
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -59,3 +59,5 @@ app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(mood.router)
 app.include_router(journal.router)
+app.include_router(chat.router)
+app.include_router(conversations.router)

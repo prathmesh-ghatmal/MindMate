@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str
 
+    OPENAI_API_KEY: str
+    CHAT_ENCRYPTION_KEY: str
+
 
     class Config:
         env_file = ".env"
