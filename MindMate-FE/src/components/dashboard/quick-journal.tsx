@@ -5,6 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Send } from "lucide-react"
+import { createJournalEntry } from "@/services/journalService"
 
 const journalPrompts = [
   "What made you smile today?",
@@ -28,29 +29,25 @@ export default function QuickJournal() {
   }
 
   const handleSubmit = async () => {
-    if (!entry.trim()) return
+  if (!entry.trim()) return
 
-    setIsSubmitting(true)
+  setIsSubmitting(true)
 
-    // TODO: Connect to backend API
-    const journalData = {
-      content: entry,
-      prompt: currentPrompt,
-      timestamp: new Date(),
-    }
-
-    console.log("Submitting journal entry:", journalData)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  try {
+    await createJournalEntry({
+      description: entry,
+      title: currentPrompt,
+    })
 
     setSubmitted(true)
     setEntry("")
+  } catch (error) {
+    console.error("Journal submit error:", error)
+  } finally {
     setIsSubmitting(false)
-
-    // Reset submitted state after 3 seconds
     setTimeout(() => setSubmitted(false), 3000)
   }
+}
 
   return (
     <motion.div

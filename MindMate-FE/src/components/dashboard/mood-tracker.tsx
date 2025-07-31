@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import { createMoodLog } from "@/services/moodService"
 
 const moodEmojis = ["😢", "😕", "😐", "😊", "😄"]
 const moodLabels = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"]
@@ -11,31 +12,31 @@ const moodLabels = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"]
 interface MoodTrackerProps {
   currentMood: { emoji: string; value: number } | null
   onMoodChange: (mood: { emoji: string; value: number }) => void
-  lastMood?: { emoji: string; value: number; date: Date }
+  lastMood?: { emoji: string; value: number; date: Date } | null
 }
 
 export default function MoodTracker({ currentMood, onMoodChange, lastMood }: MoodTrackerProps) {
   const [selectedMood, setSelectedMood] = useState<number>(3)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleMoodSubmit = async () => {
-    setIsSubmitting(true)
+const handleMoodSubmit = async () => {
+  setIsSubmitting(true)
 
-    // TODO: Connect to backend API
-    const moodData = {
+  try {
+    const response = await createMoodLog(selectedMood)
+    console.log(response.data)
+    const newMood = {
       emoji: moodEmojis[selectedMood - 1],
       value: selectedMood,
-      timestamp: new Date(),
     }
 
-    console.log("Submitting mood:", moodData)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    onMoodChange(moodData)
+    onMoodChange(newMood)
+  } catch (error) {
+    console.error("Failed to log mood:", error) 
+  } finally {
     setIsSubmitting(false)
   }
+}
 
   return (
     <motion.div
