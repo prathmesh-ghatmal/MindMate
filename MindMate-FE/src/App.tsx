@@ -1,4 +1,3 @@
-import React from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import LandingPage from "@/pages/LandingPage"
 import "./index.css"
@@ -7,6 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute" // For private routes
 import PublicRoute from "./components/PublicRoute"
 import Dashboard from "./pages/Dashboard"
 import ChatPage from "./pages/Chat"
+import JournalPage from "./pages/Journal"
 
 const App = () => {
   return (
@@ -16,6 +16,7 @@ const App = () => {
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+         <Route path="/journal" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />
         {/* Example Private Route (future use) */}
         {/* 
         <Route
