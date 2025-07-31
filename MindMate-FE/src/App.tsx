@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard"
 import ChatPage from "./pages/Chat"
 import JournalPage from "./pages/Journal"
 import ResourcesPage from "./pages/Resources"
+import ProfilePage from "./pages/Profile"
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
          <Route path="/journal" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />
          <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
+         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         {/* Example Private Route (future use) */}
         {/* 
         <Route
