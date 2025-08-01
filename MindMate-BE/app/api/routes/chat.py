@@ -5,12 +5,14 @@ from datetime import datetime
 import pdfkit
 from fastapi.responses import FileResponse
 from pytz import timezone  # ✅ Added for IST conversion
-
 from app.db.database import get_db
 from app.db import models 
 from app.schemas import chat as schemas
 from app.services.encryption import encrypt_message, decrypt_message
 from app.services.gpt_client import get_mental_health_reply, summarize_conversation
+from app.dependencies.auth import get_current_user
+from app.db.models import User 
+from fastapi import HTTPException, status
 
 # ✅ Define IST timezone
 IST = timezone("Asia/Kolkata")
@@ -20,12 +22,29 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 # ========================
 # ✅ Chat Message Endpoint
 # ========================
+
+
 @router.post("/send", response_model=schemas.ChatResponse)
-async def send_message(req: schemas.ChatRequest, db: Session = Depends(get_db)):
+async def send_message(
+    req: schemas.ChatRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    # 🔐 Check if conversation exists
     convo = db.query(models.Conversation).get(req.conversation_id)
     if not convo:
-        return {"error": "Conversation not found"}
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+
+    # 🔐 Check if conversation belongs to current user
+    if convo.user_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this conversation"
+        )
+
     # ✅ Save user message
     user_msg = models.Message(
         conversation_id=req.conversation_id,
@@ -47,11 +66,11 @@ async def send_message(req: schemas.ChatRequest, db: Session = Depends(get_db)):
         for m in past_msgs
     ]
 
-    # ✅ Get bot reply with existing summary as memory
+    # ✅ Get bot reply with memory
     bot_reply = await get_mental_health_reply(
         context_messages, 
         req.message, 
-        summary=convo.summary  # <-- memory injection
+        summary=convo.summary
     )
 
     # ✅ Save bot reply
@@ -73,11 +92,25 @@ async def send_message(req: schemas.ChatRequest, db: Session = Depends(get_db)):
 
     return {"reply": bot_reply}
 
+
 # ==============================
 # ✅ Get All Messages in a Chat
 # ==============================
 @router.get("/{conversation_id}/messages")
-def get_conversation_messages(conversation_id: UUID, db: Session = Depends(get_db)):
+def get_conversation_messages(conversation_id: UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    # 🔐 Check if conversation exists
+    convo = db.query(models.Conversation).get(conversation_id)
+    if not convo:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    # 🔐 Check if conversation belongs to current user
+    if convo.user_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this conversation"
+        )
     msgs = (
         db.query(models.Message)
         .filter(models.Message.conversation_id == conversation_id)
@@ -101,11 +134,18 @@ def get_conversation_messages(conversation_id: UUID, db: Session = Depends(get_d
 # ✅ Export Chat as WhatsApp-style PDF
 # =========================================
 @router.get("/{conversation_id}/export-pdf")
-def export_conversation_pdf(conversation_id: UUID, db: Session = Depends(get_db)):
+def export_conversation_pdf(conversation_id: UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     convo = db.query(models.Conversation).get(conversation_id)
     if not convo:
-        return {"error": "Conversation not found"}
-
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+    if convo.user_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this conversation"
+        )
     messages = (
         db.query(models.Message)
         .filter_by(conversation_id=conversation_id)
