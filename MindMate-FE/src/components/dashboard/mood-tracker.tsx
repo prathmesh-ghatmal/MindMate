@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { createMoodLog } from "@/services/moodService"
 
-const moodEmojis = ["😢", "😕", "😐", "😊", "😄"]
+const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
+
 const moodLabels = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"]
 
 interface MoodTrackerProps {

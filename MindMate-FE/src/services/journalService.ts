@@ -1,7 +1,14 @@
 // src/services/journalService.ts
 import api from "@/api/axios"
 
-export const createJournalEntry = async ({
+interface JournalEntryInput {
+  title: string
+  description: string
+  mood: number
+  tags: string[]
+}
+
+export const createQuickJournalEntry = async ({
   title,
   description,
 }: {
@@ -14,5 +21,10 @@ export const createJournalEntry = async ({
 
 export const getAllJournalEntries = async () => {
   const response = await api.get("/journal/")
+  return response.data
+}
+
+export const createJournalEntry = async (entry:JournalEntryInput) => {
+  const response = await api.post("/journal/", entry)
   return response.data
 }

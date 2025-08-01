@@ -27,7 +27,8 @@ export default function JournalEntry({ entry, index }: JournalEntryProps) {
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
-              <span>{entry.date.toLocaleDateString()}</span>
+              <span>{new Date(entry.date).toLocaleDateString()}</span>
+
             </div>
             <div className="flex items-center space-x-1">
               <span className="text-lg">{entry.mood.emoji}</span>

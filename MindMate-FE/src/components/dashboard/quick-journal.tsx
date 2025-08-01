@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Send } from "lucide-react"
-import { createJournalEntry } from "@/services/journalService"
+import { createQuickJournalEntry } from "@/services/journalService"
 
 const journalPrompts = [
   "What made you smile today?",
@@ -34,7 +34,7 @@ export default function QuickJournal() {
   setIsSubmitting(true)
 
   try {
-    await createJournalEntry({
+    await createQuickJournalEntry({
       description: entry,
       title: currentPrompt,
     })

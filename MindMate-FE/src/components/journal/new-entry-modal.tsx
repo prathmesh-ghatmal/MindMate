@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
+import { createJournalEntry } from "@/services/journalService"
 
-const moodEmojis = ["😢", "😕", "😐", "😊", "😄"]
+const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
 const suggestions = [
   "What made you smile today?",
   "What are you grateful for?",
@@ -29,22 +30,21 @@ export default function NewEntryModal({ isOpen, onClose, onSave }: NewEntryModal
   const [tags, setTags] = useState("")
   const [currentSuggestion, setCurrentSuggestion] = useState(suggestions[0])
 
-  const handleSave = () => {
+  const handleSave =async () => {
     if (!title.trim() || !content.trim()) return
 
     const entry = {
       title: title.trim(),
-      content: content.trim(),
-      mood: {
-        emoji: moodEmojis[mood - 1],
-        value: mood,
-      },
+      description: content.trim(),
+      mood: mood, 
       tags: tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
     }
 
+    const data=await createJournalEntry(entry);
+    console.log(data)
     onSave(entry)
 
     // Reset form

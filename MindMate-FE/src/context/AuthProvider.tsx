@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       const { access_token, refresh_token } = await loginUser(email, password)
-
+      console.log(access_token, refresh_token)
       if (access_token && refresh_token) {
         localStorage.setItem("access_token", access_token)
         localStorage.setItem("refresh_token", refresh_token)
