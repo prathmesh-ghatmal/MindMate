@@ -1,10 +1,11 @@
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowLeft, Plus, Calendar, Heart, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import JournalEntry from "@/components/journal/journal-entry"
 import NewEntryModal from "@/components/journal/new-entry-modal"
+import { getAllJournalEntries } from "@/services/journalService"
 
 // Mock journal entries - to be replaced with backend integration
 const mockEntries = [
@@ -37,20 +38,70 @@ const mockEntries = [
   },
 ]
 
+const moodEmojis = [
+  { emoji: "😔", value: 1 },
+  { emoji: "😐", value: 2 },
+  { emoji: "😊", value: 3 },
+  { emoji: "😁", value: 4 },
+  { emoji: "🤩", value: 5 },
+];
+
 export default function JournalPage() {
   const [entries, setEntries] = useState(mockEntries)
+  const [loading, setLoading] = useState(true)
   const [showNewEntry, setShowNewEntry] = useState(false)
   const navigate = useNavigate()
+  useEffect(() => {
+  const fetchEntries = async () => {
+    try {
+      const data = await getAllJournalEntries()
+      console.log("theses are entries",data)
+      const formattedEntries = data.map((entry: any) => {
+  const moodIndex = entry.mood ? entry.mood - 1 : null;
+  const mood =
+    moodIndex !== null && moodEmojis[moodIndex]
+      ? moodEmojis[moodIndex]
+      : { emoji: "❓", value: 1 };
 
-  const handleNewEntry = (entry: any) => {
-    const newEntry = {
-      id: Date.now().toString(),
-      ...entry,
-      date: new Date(),
+  return {
+    id: entry.id,
+    title: entry.title,
+    content: entry.description,
+    mood,
+    date: new Date(entry.created_at),
+    tags: entry.tags ?? [],
+  };
+});
+setEntries(formattedEntries);
+console.log("hello",formattedEntries)
+
+     
+    } catch (error) {
+      console.error("Failed to fetch journal entries", error)
+    } finally {
+      setLoading(false)
     }
-    setEntries((prev) => [newEntry, ...prev])
   }
 
+  fetchEntries()
+}, [])
+
+  const handleNewEntry = (entry: any) => {
+    // const newEntry = {
+    //   id: Date.now().toString(),
+    //   ...entry,
+    //   date: new Date(),
+    // }
+    // setEntries((prev) => [newEntry, ...prev])
+     window.location.reload();
+  }
+    if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full p-4">
+        <div className="loader">Loading...</div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50">
       {/* Header */}
