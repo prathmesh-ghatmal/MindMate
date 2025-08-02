@@ -12,5 +12,6 @@ def get_my_profile(current_user: User = Depends(get_current_user)):
         "id": str(current_user.id),  # UUID needs to be converted to string
         "email": current_user.email,
         "is_verified": current_user.is_verified,
-        "first_name": current_user.first_name
+        "first_name": current_user.first_name,
+        "joinDate": current_user.created_at.isoformat()  # Convert datetime to ISO format
     }
