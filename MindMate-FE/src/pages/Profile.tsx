@@ -4,19 +4,57 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthProvider"
-import { mockUser, mockMoodHistory } from "@/lib/data"
+import { mockUser, mockMoodHistory, type MoodEntry } from "@/lib/data"
 import MoodGraph from "@/components/charts/mood-graph"
 import WallpaperSelector from "@/components/profile/wallpaper-selector"
-import { useState } from "react"
+import {  useEffect, useState } from "react"
+import { fetchUserProfile } from "@/services/authService"
+import { getAllMoodLogs } from "@/services/moodService"
+
 
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { logout } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [userProfile, setUserProfile] = useState(mockUser)
+  const [moodEntry, setMoodEntry] = useState<MoodEntry[]>(mockMoodHistory)
+
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const profile = await fetchUserProfile()
+        const allLogs = await getAllMoodLogs()
+       
+        const formattedEntries: MoodEntry[] = allLogs.map((entry: any) => ({
+  id: entry.id,
+  mood: entry.mood,
+  date: new Date(entry.created_at), // Convert string to Date object
+}))
+ setMoodEntry(formattedEntries)
+        console.log("Mood Entries:", formattedEntries)
+              const uniqueDays = new Set(
+                allLogs.map((log: any) => new Date(log.created_at).toDateString())
+              )
+        setUserProfile({
+          id: profile.id,
+          name: profile.first_name,
+          email: profile.email,
+          joinDate: new Date(profile.joinDate),
+          streak: uniqueDays.size,
+        })
+      } catch (err) {
+        
+        console.error(err)
+      } 
+    }
+
+    getUser()
+  }, []) 
 
   const handleSaveProfile = () => {
     // TODO: Connect to backend API
+    console.log("userProfile", userProfile.name)
     console.log("Saving profile:", userProfile)
     setIsEditing(false)
   }
@@ -27,7 +65,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50 text-gray-800">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
@@ -98,7 +136,7 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="flex space-x-2">
-                      <Button className="flex-1 bg-purple-500 hover:opacity-90 text-white rounded-xl">
+                      <Button onClick={handleSaveProfile} className="flex-1 bg-purple-500 hover:opacity-90 text-white rounded-xl">
                         Save
                       </Button>
                       <Button
@@ -143,7 +181,7 @@ export default function ProfilePage() {
           {/* Right Column - Charts and Stats */}
           <div className="lg:col-span-2 space-y-6">
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <MoodGraph moodData={mockMoodHistory} />
+              <MoodGraph moodData={moodEntry} />
             </motion.div>
 
             <motion.div
@@ -154,12 +192,12 @@ export default function ProfilePage() {
             >
               <div className="bg-purple-500 rounded-2xl p-6 text-white">
                 <h3 className="text-lg font-semibold mb-2">Total Entries</h3>
-                <p className="text-3xl font-bold">{mockMoodHistory.length}</p>
+                <p className="text-3xl font-bold">{moodEntry.length}</p>
               </div>
               <div className="bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl p-6 text-white">
                 <h3 className="text-lg font-semibold mb-2">Average Mood</h3>
                 <p className="text-3xl font-bold">
-                  {(mockMoodHistory.reduce((sum, entry) => sum + entry.value, 0) / mockMoodHistory.length).toFixed(1)}
+                  {(moodEntry.reduce((sum, entry) => sum + entry.mood, 0) / moodEntry.length).toFixed(1)}
                 </p>
               </div>
               <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl p-6 text-white">
