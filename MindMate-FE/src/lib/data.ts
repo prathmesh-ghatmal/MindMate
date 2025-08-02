@@ -11,8 +11,7 @@ export interface User {
 
 export interface MoodEntry {
   id: string
-  emoji: string
-  value: number
+  mood: number
   date: Date
   note?: string
 }
@@ -52,15 +51,15 @@ export const mockUser: User = {
   streak: 7,
 }
 
-export const mockMoodHistory: MoodEntry[] = [
-  { id: "1", emoji: "😊", value: 4, date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000) },
-  { id: "2", emoji: "😄", value: 5, date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
-  { id: "3", emoji: "😐", value: 3, date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
-  { id: "4", emoji: "😊", value: 4, date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
-  { id: "5", emoji: "😕", value: 2, date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
-  { id: "6", emoji: "😊", value: 4, date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
-  { id: "7", emoji: "😄", value: 5, date: new Date() },
-]
+    export const mockMoodHistory: MoodEntry[] = [
+      { id: "1dlnmbngnbklgfmmnkl bfm",  mood: 1, date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000) },
+      { id: "2 ,mcmmc,m mm,",  mood: 5, date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+      { id: "3 c,mm,mcm,,m",  mood: 3, date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
+      { id: "4 ,.cv ,mm",  mood: 4, date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+      { id: "5 .c.m,mc",  mood: 2, date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+      { id: "6 cm,, cb",  mood: 4, date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
+      { id: "7x,nmnbkjjk",  mood: 5, date: new Date() },
+    ]
 
 export const landingPageContent = {
   hero: {

@@ -30,15 +30,35 @@ export default function MoodGraph({ moodData, className = "" }: MoodGraphProps) 
 
     ctx.clearRect(0, 0, width, height)
 
-    const sortedData = [...moodData].sort((a, b) => a.date.getTime() - b.date.getTime())
+    // 1. Group moods by date string (e.g. "2025-08-02")
+const grouped: Record<string, number[]> = {}
+moodData.forEach((entry) => {
+  const dateKey = entry.date.toLocaleDateString("en-CA") // "YYYY-MM-DD" in local timezone
+ // "YYYY-MM-DD"
+  if (!grouped[dateKey]) grouped[dateKey] = []
+  grouped[dateKey].push(entry.mood)
+})
+
+// 2. Calculate average mood per date
+const averagedData: MoodEntry[] = Object.entries(grouped).map(([dateStr, moods]) => {
+  const avg = moods.reduce((sum, val) => sum + val, 0) / moods.length
+  return {
+    id: dateStr,
+    mood: Math.round(avg * 100) / 100, // optional: round to 2 decimals
+    date: new Date(dateStr),
+  }
+})
+
+// 3. Sort by date
+const sortedData = averagedData.sort((a, b) => a.date.getTime() - b.date.getTime())
+
     const maxValue = 5
     const minValue = 1
 
     const points = sortedData.map((entry, index) => ({
       x: padding + (index * (width - 2 * padding)) / Math.max(sortedData.length - 1, 1),
-      y: height - padding - ((entry.value - minValue) * (height - 2 * padding)) / (maxValue - minValue),
-      value: entry.value,
-      emoji: entry.emoji,
+      y: height - padding - ((entry.mood - minValue) * (height - 2 * padding)) / (maxValue - minValue),
+      mood: entry.mood,
       date: entry.date,
     }))
 
