@@ -65,13 +65,7 @@ useEffect(() => {
       const previosConversations = await getAllConversations()
       console.log(previosConversations)
       setConversations(previosConversations)
-      if (previosConversations.length > 0) {
-        const lastConversation = previosConversations[previosConversations.length - 1]
-        setCurrentConversationId(lastConversation.id)
-        sessionStorage.setItem("conversationId", lastConversation.id)
-      } else {
-        setCurrentConversationId(null)
-      }
+      
       if (!currrentConversationId) {
         console.log("No current conversation ID found, creating a new conversation")
       }else{
@@ -101,6 +95,7 @@ useEffect(() => {
 
   const handleSendMessage = async (content: string) => {
   if (!content.trim()) return;
+  console.log("this is current conversation id", currrentConversationId)
 
   const userMessage: Message = {
     id: Date.now().toString(),
