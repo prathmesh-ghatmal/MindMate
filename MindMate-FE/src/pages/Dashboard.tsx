@@ -27,6 +27,10 @@ export default function Dashboard() {
   
   useEffect(() => {
   const fetchData = async () => {
+    console.log("first")
+      setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }) // or behavior: "auto"
+  }, 0)
     try {
         const user=await fetchUserProfile()
         setName(user.first_name)
