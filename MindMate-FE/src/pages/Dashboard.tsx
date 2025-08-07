@@ -18,7 +18,7 @@ import { fetchUserProfile } from "@/services/authService"
 // }
 
 export default function Dashboard() {
-  const moodEmojis = ["😢", "😕", "😐", "😊", "😄"]
+  const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
   const [currentMood, setCurrentMood] = useState<{ emoji: string; value: number } | null>(null)
   const [name, setName] = useState<string>("")
   const [lastMood, setLastMood] = useState<{ emoji: string; value: number; date: Date } | null>(null)
@@ -81,6 +81,15 @@ export default function Dashboard() {
     },
   ]
 
+  const handleMoodChange = (mood: { emoji: string; value: number }) => {
+  setCurrentMood(mood)
+  setLastMood({
+    ...mood,
+    date: new Date()
+  })
+}
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50">
       <DashboardHeader user={{name}} />
@@ -93,7 +102,7 @@ export default function Dashboard() {
         >
           {/* Left Column - Mood & Journal */}
           <div className="lg:col-span-2 space-y-6">
-            <MoodTracker currentMood={currentMood} onMoodChange={setCurrentMood} lastMood={lastMood} />
+            <MoodTracker currentMood={currentMood} onMoodChange={handleMoodChange} lastMood={lastMood} />
             <QuickJournal />
           </div>
 
