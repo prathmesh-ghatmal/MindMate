@@ -231,16 +231,18 @@ useEffect(() => {
 
   return (
     
-    <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50 z-0">
       {/* Sidebar */}
         {showSidebar && (
      <motion.div
+     className="fixed top-0 left-0 z-50"
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -100 }}
         transition={{ duration: 0.3 }}
      >
             <SidebarChatHistory
+            
               conversations={conversations}
               onSelect={handleConversationSelect}
               onRename={handleRenameConversation}
@@ -253,12 +255,18 @@ useEffect(() => {
 
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+     <div className={`flex-1 flex flex-col min-h-screen  ${
+  showSidebar ? "ml-64 bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50" : ""
+}`}>
+
         {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/70 backdrop-blur-sm border-b border-white/20 p-4"
+          // className="bg-white/70 backdrop-blur-sm border-b border-white/20 p-4 "
+           className={`fixed top-0 right-0 left-0 bg-white backdrop-blur-sm border-b border-white/20 p-4 z-50 ${
+    showSidebar ? "ml-64" : "ml-0"
+  }`}
         >
           <div className="container mx-auto flex items-center space-x-4">
             <Button
@@ -284,7 +292,7 @@ useEffect(() => {
         </motion.header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto py-16 mt-16">
           <div className="container mx-auto max-w-4xl space-y-4">
             {messages.map((message, index) => (
               <ChatMessage key={message.id} message={message} isLast={index === messages.length - 1} />
@@ -325,8 +333,13 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Input */}
+            <div  className={`fixed bottom-0 right-0 left-0 ${
+    showSidebar ? "ml-64" : "ml-0"
+  }`}>
+               {/* Input */}
         <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
+            </div>
+       
       </div>
     </div>
   )
