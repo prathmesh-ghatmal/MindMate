@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Heart, Settings, Bell } from "lucide-react"
+import { Heart} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthProvider"
 
@@ -47,12 +47,7 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
 
           <div className="flex items-center space-x-3">
            
-            <Button variant="ghost" size="sm">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Settings className="h-5 w-5" />
-            </Button>
+           
             <Button variant="outline" size="sm" onClick={logout}>
               Sign Out
             </Button>
