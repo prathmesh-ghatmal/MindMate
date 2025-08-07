@@ -233,23 +233,21 @@ useEffect(() => {
     
     <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-teal-50">
       {/* Sidebar */}
-      {showSidebar && (
+        {showSidebar && (
      <motion.div
-  initial={{ opacity: 0, x: -100 }}
-  animate={{ opacity: 1, x: 0 }}
-  exit={{ opacity: 0, x: -100 }}
-  transition={{ duration: 0.3 }}
-  // className="bg-white/70 backdrop-blur-sm border-r border-white/20 p-4 h-screen w-72 fixed top-0 left-0 z-40"
->
-  <SidebarChatHistory
-    conversations={conversations}
-    onSelect={handleConversationSelect}
-    onRename={handleRenameConversation}
-    onDelete={handleDeleteConversation}
-    onShare={handleShareConversation}
-  />
-</motion.div>
-
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -100 }}
+        transition={{ duration: 0.3 }}
+     >
+            <SidebarChatHistory
+              conversations={conversations}
+              onSelect={handleConversationSelect}
+              onRename={handleRenameConversation}
+              onDelete={handleDeleteConversation}
+              onShare={handleShareConversation}
+            />
+      </motion.div>
 )}
   
 
@@ -264,13 +262,12 @@ useEffect(() => {
         >
           <div className="container mx-auto flex items-center space-x-4">
             <Button
+              className="fixed top-4 left-4 z-50 md:hidden"
+              variant="ghost"
+              size="icon"
+            >
   
-  className="fixed top-4 left-4 z-50 md:hidden"
-  variant="ghost"
-  size="icon"
->
-  
-</Button>
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => setShowSidebar(!showSidebar)}>
              <Menu className="w-6 h-6 text-gray-700" />
             </Button>
