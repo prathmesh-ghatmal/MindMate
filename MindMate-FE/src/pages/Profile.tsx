@@ -10,6 +10,7 @@ import WallpaperSelector from "@/components/profile/wallpaper-selector"
 import {  useEffect, useState } from "react"
 import { fetchUserProfile } from "@/services/authService"
 import { getAllMoodLogs } from "@/services/moodService"
+import { updateUserProfile } from "@/services/userService"
 
 
 export default function ProfilePage() {
@@ -52,10 +53,12 @@ export default function ProfilePage() {
     getUser()
   }, []) 
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async() => {
     // TODO: Connect to backend API
     console.log("userProfile", userProfile.name)
     console.log("Saving profile:", userProfile)
+    const updateduser=updateUserProfile({first_name: userProfile.name})
+    console.log(updateduser)
     setIsEditing(false)
   }
 

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
-import { createJournalEntry } from "@/services/journalService"
+import { createJournalEntry, updateJournalEntry } from "@/services/journalService"
+
 
 const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
 const suggestions = [
@@ -20,10 +21,19 @@ const suggestions = [
 interface NewEntryModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (entry: any) => void
+  onSave: () => void
+  initialData?: {
+    id: string
+    title: string
+    content: string
+    mood: { emoji: string; value: number }
+    date: Date
+    tags: string[]
+  } | null
 }
 
-export default function NewEntryModal({ isOpen, onClose, onSave }: NewEntryModalProps) {
+
+export default function NewEntryModal({ isOpen, onClose, onSave, initialData }: NewEntryModalProps) {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [mood, setMood] = useState(3)
@@ -42,11 +52,18 @@ export default function NewEntryModal({ isOpen, onClose, onSave }: NewEntryModal
         .map((tag) => tag.trim())
         .filter(Boolean),
     }
+    if (initialData) {
+      // Update existing entry
+      const updatedresponse=await updateJournalEntry(initialData.id, entry);
+      console.log("this is update", updatedresponse)
 
+    } 
+    else {
     const data=await createJournalEntry(entry);
-    console.log(data)
-    onSave(entry)
-
+    console.log("this is create", data)
+    
+    }
+    onSave()
     // Reset form
     setTitle("")
     setContent("")
@@ -112,7 +129,7 @@ export default function NewEntryModal({ isOpen, onClose, onSave }: NewEntryModal
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                 <Input
-                  value={title}
+                  value={title||initialData?.title || ""}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Give your entry a title..."
                   className="rounded-xl border-2 border-gray-200 focus:border-purple-400"
@@ -123,7 +140,7 @@ export default function NewEntryModal({ isOpen, onClose, onSave }: NewEntryModal
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Your thoughts</label>
                 <Textarea
-                  value={content}
+                  value={content||initialData?.content || ""}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Start writing your thoughts..."
                   className="min-h-[200px] rounded-xl border-2 border-gray-200 focus:border-purple-400 resize-none"

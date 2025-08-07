@@ -32,6 +32,7 @@ const handleMoodSubmit = async () => {
     }
 
     onMoodChange(newMood)
+
   } catch (error) {
     console.error("Failed to log mood:", error) 
   } finally {

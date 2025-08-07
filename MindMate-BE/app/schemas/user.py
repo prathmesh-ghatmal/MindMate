@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator,Field
 import re
 from typing import Optional
 
@@ -61,3 +61,8 @@ class Token(BaseModel):
     
 class RefreshRequest(BaseModel):
     refresh_token: str
+
+class UserUpdateRequest(BaseModel):
+    first_name: Optional[str] = Field(None, max_length=50)
+    last_name: Optional[str] = Field(None, max_length=50)
+    is_active: Optional[bool] = None

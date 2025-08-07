@@ -57,65 +57,73 @@ export default function Sidebar({
 
   return (
     <>
-      <aside className="md:block w-full md:w-64 p-2 border-r h-screen overflow-y-auto bg-white">
-        <div className="flex items-center justify-evenly mb-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="bg-gray-100 text-black hover:bg-gray-300">
-            ←
-          </Button>
-          <h2 className="text-lg font-semibold text-gray-700">Your Conversations</h2>
-        </div>
+     <aside className="md:block w-full md:w-64 h-screen bg-white border-r flex flex-col">
+  {/* Fixed Header */}
+  <div className="flex items-center justify-evenly p-4 border-b">
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => navigate(-1)}
+      className="bg-gray-100 text-black hover:bg-gray-300"
+    >
+      ←
+    </Button>
+    <h2 className="text-lg font-semibold text-gray-700">Your Conversations</h2>
+  </div>
 
-        <ScrollArea className="h-[calc(100vh-100px)] pr-2">
-          <div className="space-y-2">
-            {conversations.map((convo) => (
-              <div
-                key={convo.id}
-                className="flex justify-between items-center bg-white/60 hover:bg-purple-100 rounded-lg px-3 py-2 cursor-pointer"
-                onClick={() => onSelect(convo.id)}
-              >
-                <span className="truncate text-gray-800">{convo.title}</span>
+  {/* Scrollable conversation list */}
+  <div className="flex-1 overflow-y-auto px-2 py-4">
+    {conversations.map((convo) => (
+      <div
+        key={convo.id}
+        className="flex justify-between items-center bg-white/60 hover:bg-purple-100 rounded-lg px-3 py-2 cursor-pointer"
+        onClick={() => onSelect(convo.id)}
+      >
+        <span className="truncate text-gray-800">{convo.title}</span>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => e.stopPropagation()}
-                      className="hover:bg-gray-200"
-                    >
-                      <MoreHorizontal className="h-4 w-4 text-gray-500" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleRenameClick(convo.id, convo.title)
-                      }}>
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                     onClick={(e) => {
-                       e.stopPropagation()
-                       onDelete(convo.id)
-                     }}>
-                      Delete
-                    </DropdownMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={(e) => e.stopPropagation()}
+              className="hover:bg-gray-200"
+            >
+              <MoreHorizontal className="h-4 w-4 text-gray-500" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation()
+                handleRenameClick(convo.id, convo.title)
+              }}
+            >
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation()
+                onDelete(convo.id)
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation()
+                onShare(convo.id)
+              }}
+            >
+              Share
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    ))}
+  </div>
+</aside>
 
-                    <DropdownMenuItem 
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onShare(convo.id)
-                    }}>
-                      Share
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </aside>
 
       {/* Rename Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>

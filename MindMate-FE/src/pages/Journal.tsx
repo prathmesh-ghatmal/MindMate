@@ -50,6 +50,8 @@ export default function JournalPage() {
   const [entries, setEntries] = useState(mockEntries)
   const [loading, setLoading] = useState(true)
   const [showNewEntry, setShowNewEntry] = useState(false)
+  const [editingEntry, setEditingEntry] = useState(null)
+
   const navigate = useNavigate()
   useEffect(() => {
   const fetchEntries = async () => {
@@ -86,7 +88,7 @@ console.log("hello",formattedEntries)
   fetchEntries()
 }, [])
 
-  const handleNewEntry = (entry: any) => {
+  const handleNewEntry = () => {
     // const newEntry = {
     //   id: Date.now().toString(),
     //   ...entry,
@@ -154,12 +156,32 @@ console.log("hello",formattedEntries)
               </Button>
             </motion.div>
           ) : (
-            entries.map((entry, index) => <JournalEntry key={entry.id} entry={entry} index={index} />)
+            entries.map((entry, index) => (
+  <JournalEntry
+    key={entry.id}
+    entry={entry}
+    index={index}
+    onEdit={(entry) => {
+      console.log("this is entry",entry)
+      setEditingEntry(entry)
+      setShowNewEntry(true)
+    }}
+  />
+))
+
           )}
         </div>
       </div>
 
-      <NewEntryModal isOpen={showNewEntry} onClose={() => setShowNewEntry(false)} onSave={handleNewEntry} />
+<NewEntryModal
+  isOpen={showNewEntry}
+  onClose={() => {
+    setShowNewEntry(false)
+    setEditingEntry(null)
+  }}
+  onSave={handleNewEntry}
+  initialData={editingEntry}
+/>
     </div>
   )
 }
