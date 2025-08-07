@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import { useState, useRef, useEffect } from "react"
 import { Heart, Menu } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import ChatMessage from "@/components/chat/chat-message"
@@ -43,7 +42,7 @@ export default function ChatPage() {
   () => sessionStorage.getItem("showSidebar") === "true"
 )
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
+ 
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -138,7 +137,7 @@ useEffect(() => {
 
   const assistantMessage: Message = {
     id: (Date.now() + 1).toString(),
-    content: assistantResponse.reply || generateBotResponse(content),
+    content: assistantResponse.reply || generateBotResponse(),
     role: "assistant",
     timestamp: new Date(),
   };
@@ -148,7 +147,7 @@ useEffect(() => {
 };
 
 
-  const generateBotResponse = (userMessage: string): string => {
+  const generateBotResponse = (): string => {
     const responses = [
       "I hear you. It's completely normal to feel that way. Can you tell me more about what's on your mind?",
       "Thank you for sharing that with me. Your feelings are valid. What would help you feel better right now?",
