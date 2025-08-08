@@ -5,5 +5,5 @@ import type { JSX } from 'react';
 
 export default function PublicRoute({ children }: { children: JSX.Element }) {
   const user = useSelector((state: RootState) => state.auth.user);
-  return user ? <Navigate to="/" replace /> : children;
+  return user ? <Navigate to="/dashboard" replace /> : children;
 }
