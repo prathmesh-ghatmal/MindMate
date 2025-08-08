@@ -32,3 +32,16 @@ export const fetchUserProfile = async () => {
   return res.data
   
 }
+
+export async function getGoogleAuthUrl(): Promise<{ auth_url: string }> {
+  const response = await api.get(`${API_BASE_URL}/auth/google-login`)
+  console.log(response.data)
+  return response.data
+}
+
+export async function handleGoogleCallback(code: string) {
+  const response = await api.get(`${API_BASE_URL}/auth/google/callback`, {
+    params: { code }
+  })
+  return response.data
+}

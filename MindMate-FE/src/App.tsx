@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as  Routes, Route } from "react-router-dom"
 import LandingPage from "@/pages/LandingPage"
 import "./index.css"
 // import Dashboard from "@/pages/Dashboard" // Optional future routes
@@ -9,6 +9,7 @@ import ChatPage from "./pages/Chat"
 import JournalPage from "./pages/Journal"
 import ResourcesPage from "./pages/Resources"
 import ProfilePage from "./pages/Profile"
+import CallbackPage from "./pages/Callback"
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+        <Route path="/callback" element={<PublicRoute><CallbackPage /></PublicRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
          <Route path="/journal" element={<ProtectedRoute><JournalPage /></ProtectedRoute>} />

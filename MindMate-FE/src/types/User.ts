@@ -6,4 +6,5 @@ export interface User {
   first_name: string // NOT optional
   access_token?: string
   refresh_token?: string
+  auth_url?:string
 }

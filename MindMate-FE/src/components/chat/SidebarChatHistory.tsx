@@ -72,6 +72,7 @@ export default function Sidebar({
   </div>
 
   {/* Scrollable conversation list */}
+   <ScrollArea className="h-[calc(100vh-100px)] pr-2">
   <div className="flex-1 overflow-y-auto px-2 py-4">
     {conversations.map((convo) => (
       <div
@@ -122,6 +123,7 @@ export default function Sidebar({
       </div>
     ))}
   </div>
+  </ScrollArea>
 </aside>
 
 
