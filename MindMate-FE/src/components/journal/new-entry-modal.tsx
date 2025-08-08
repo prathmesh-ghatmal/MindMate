@@ -177,7 +177,7 @@ export default function NewEntryModal({ isOpen, onClose, onSave, initialData }: 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tags (optional)</label>
                 <Input
-                  value={tags}
+                  value={tags||initialData?.tags.join(", ") || ""}
                   onChange={(e) => setTags(e.target.value)}
                   placeholder="gratitude, work, family (separate with commas)"
                   className="rounded-xl border-2 border-gray-200 focus:border-purple-400"
