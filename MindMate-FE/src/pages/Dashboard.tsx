@@ -85,12 +85,17 @@ export default function Dashboard() {
     },
   ]
 
-  const handleMoodChange = (mood: { emoji: string; value: number }) => {
+  const handleMoodChange = async (mood: { emoji: string; value: number }) => {
   setCurrentMood(mood)
   setLastMood({
     ...mood,
     date: new Date()
   })
+  const allLogs = await getAllMoodLogs()
+      const uniqueDays = new Set(
+        allLogs.map((log: any) => new Date(log.created_at).toDateString())
+      )
+      setStreak(uniqueDays.size)
 }
 
 
