@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const { logout } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [userProfile, setUserProfile] = useState(mockUser)
+  const [editingUser, setEditingUser] = useState(mockUser)
   const [moodEntry, setMoodEntry] = useState<MoodEntry[]>(mockMoodHistory)
 
 
@@ -55,9 +56,10 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async() => {
     // TODO: Connect to backend API
-    console.log("userProfile", userProfile.name)
+    console.log("userProfile", editingUser.name)
     console.log("Saving profile:", userProfile)
-    const updateduser=updateUserProfile({first_name: userProfile.name})
+    const updateduser=updateUserProfile({first_name: editingUser.name})
+    setUserProfile(editingUser)
     console.log(updateduser)
     setIsEditing(false)
   }
@@ -65,6 +67,12 @@ export default function ProfilePage() {
   const handleLogout = () => {
     logout()
     navigate("/")
+  }
+
+  const handleEditProfile = () => {
+    setIsEditing(true)
+    setEditingUser(userProfile)
+   
   }
 
   return (
@@ -125,14 +133,15 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-800 mb-1">Name</label>
                       <Input
-                        value={userProfile.name}
-                        onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })}
+                        value={editingUser.name}
+                        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                         className="rounded-xl border-2 border-gray-200 focus:border-purple-400"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-800 mb-1">Email</label>
                       <Input
+                        readOnly
                         value={userProfile.email}
                         onChange={(e) => setUserProfile({ ...userProfile, email: e.target.value })}
                         className="rounded-xl border-2 border-gray-200 focus:border-purple-400"
@@ -164,7 +173,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <Button
-                      onClick={() => setIsEditing(true)}
+                      onClick={handleEditProfile}
                       variant="outline"
                       className="w-full rounded-xl bg-transparent"
                     >
