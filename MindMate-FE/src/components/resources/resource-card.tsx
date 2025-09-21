@@ -36,6 +36,7 @@ export default function ResourceCard({ resource, gradient, index }: ResourceCard
 
   const handleResourceClick = () => {
     // TODO: Connect to actual resource URLs
+    window.open(resource.url, "_blank")
     console.log("Opening resource:", resource.url)
   }
 
