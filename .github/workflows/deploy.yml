@@ -13,44 +13,48 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    # ---------- FRONTEND: BUILD ----------
+    # ---------- FRONTEND ----------
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version: 18
 
     - name: Install frontend dependencies
-      working-directory: frontend
+      working-directory: MindMate-FE
       run: npm install
 
     - name: Build frontend
-      working-directory: frontend
+      working-directory: MindMate-FE
       run: npm run build
-      # NOTE: If you're using CRA and build output is "build" instead of "dist",
-      # change dist → build in the next step.
 
-    # ---------- DEPLOY FRONTEND TO WSL ----------
+    # ---------- COPY FRONTEND BUILD TO WSL ----------
     - name: Copy frontend build to WSL
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        source: "frontend/dist/*"
+        source: "MindMate-FE/dist/*"
         target: "/home/hp/apps/mindmate-frontend/"
 
-    # ---------- DEPLOY BACKEND CODE TO WSL ----------
-    - name: Copy backend code to WSL
+    # ---------- BACKEND ----------
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # no need to install deps here, we install on WSL after copying
+    - name: Copy backend to WSL
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        source: "backend/*"
+        source: "MindMate-BE/*"
         target: "/home/hp/apps/mindmate-backend/"
 
-    # ---------- RUN BACKEND SETUP & RESTART SERVICE ----------
-    - name: Install backend deps & restart service
+    # ---------- INSTALL DEPS + RESTART SERVICE ----------
+    - name: Install deps & restart FastAPI
       uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
@@ -58,8 +62,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           cd /home/hp/apps/mindmate-backend
-          # activate venv and install requirements
           source venv/bin/activate
           pip install -r requirements.txt
-          # restart FastAPI service
-          sudo systemctl restart mindmate-backend.service
+          sudo systemctl restart mindmate-backend
