@@ -53,9 +53,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         strip_components: 1
-        source: |
-          MindMate-BE/app/**
-          MindMate-BE/requirements.txt
+        source: "MindMate-BE/app/**"
         target: "/home/hp/apps/mindmate-backend/"
 
     # ---------- INSTALL + RESTART ----------
