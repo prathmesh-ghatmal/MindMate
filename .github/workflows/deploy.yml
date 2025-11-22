@@ -52,6 +52,7 @@ jobs:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
+        strip_components: 1
         source: |
           MindMate-BE/app/**
           MindMate-BE/requirements.txt
