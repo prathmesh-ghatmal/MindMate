@@ -13,16 +13,15 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    # ---------- TAILSCALE LOGIN ----------
+    # -------- TAILSCALE ----------
     - name: Connect to Tailscale
       uses: tailscale/github-action@v2
       with:
         oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
         oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
         tags: tag:ci
-        hostname: github-runner
 
-    # ---------- FRONTEND ----------
+    # -------- FRONTEND ----------
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
@@ -36,7 +35,6 @@ jobs:
       working-directory: MindMate-FE
       run: npm run build
 
-    # ---------- COPY FRONTEND BUILD ----------
     - name: Copy frontend build to WSL
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -46,32 +44,18 @@ jobs:
         source: "MindMate-FE/dist/*"
         target: "/home/hp/apps/mindmate-frontend/"
 
-    # ---------- BACKEND ----------
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-
-    # COPY ONLY BACKEND FOLDER CONTENT PROPERLY
-    - name: Copy backend to WSL (clean overwrite)
+    # -------- BACKEND ----------
+    - name: Copy backend files properly
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        source: "MindMate-BE/app/*"
-        target: "/home/hp/apps/mindmate-backend/app/"
-
-    - name: Copy backend requirements
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        source: "MindMate-BE/requirements.txt"
+        source: |
+          MindMate-BE/app/*
+          MindMate-BE/requirements.txt
         target: "/home/hp/apps/mindmate-backend/"
 
-    # ---------- INSTALL DEPS + RESTART SERVICE ----------
     - name: Install deps & restart FastAPI
       uses: appleboy/ssh-action@v0.1.7
       with:
@@ -80,6 +64,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
           cd /home/hp/apps/mindmate-backend
+          python3 -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
           sudo systemctl restart mindmate-backend
