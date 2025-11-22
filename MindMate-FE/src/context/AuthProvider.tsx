@@ -1,5 +1,5 @@
 // src/context/AuthProvider.tsx
-import { createContext, useContext } from "react"
+import { createContext} from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { loginSuccess, logout } from "@/redux/slices/authSlice"
 import type { RootState, AppDispatch } from "@/redux/store"
@@ -7,7 +7,14 @@ import type { User } from "@/types/User"
 import { fetchUserProfile, getGoogleAuthUrl, loginUser, registerUser } from "@/services/authService"
 import { toast } from "react-hot-toast"
 import { useNavigate } from "react-router-dom" 
-
+interface ApiError {
+  response?: {
+    status: number
+    data?: {
+      detail?: string
+    }
+  }
+}
 
 interface AuthContextType {
   user: User | null
@@ -46,8 +53,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Access token is missing.")
         toast.error("Unexpected error during login. Try again.")
       }
-    } catch (err: any) {
-      if (err?.response?.status === 403 && err?.response?.data?.detail === "Please verify your email first") {
+    } catch (err: unknown) {
+      if ((err as ApiError)?.response?.status === 403 && (err as ApiError)?.response?.data?.detail === "Please verify your email first") {
         toast.error("Please verify your email before logging in.")
       } else {
         toast.error("Login failed. Please check your credentials.")
@@ -59,10 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await registerUser(email, password, name)
       toast.success("Registration successful! Please check your email to verify your account.")
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (
-        err?.response?.status === 400 &&
-        err?.response?.data?.detail === "Email already registered"
+        (err as ApiError)?.response?.status === 400 &&
+        (err as ApiError)?.response?.data?.detail === "Email already registered"
       ) {
         toast.error("This email is already registered. Please login or use another email.")
       } else {
@@ -119,8 +126,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Access token is missing.")
         toast.error("Unexpected error during login. Try again.")
       }
-    } catch (err: any) {
-      if (err?.response?.status === 403 && err?.response?.data?.detail === "Please verify your email first") {
+    } catch (err: unknown) {
+      if ((err as ApiError)?.response?.status === 403 && (err as ApiError)?.response?.data?.detail === "Please verify your email first") {
         toast.error("Please verify your email before logging in.")
       } else {
         toast.error("Login failed. Please check your credentials.")
@@ -135,11 +142,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider")
-  }
-  return context
-}
-
+export { AuthContext }

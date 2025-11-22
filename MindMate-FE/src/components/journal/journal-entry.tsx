@@ -1,3 +1,4 @@
+import type { JournalEntry } from "@/lib/data"
 import { motion } from "framer-motion"
 import { Calendar, Pencil, Tag } from "lucide-react"
 
@@ -11,7 +12,7 @@ interface JournalEntryProps {
     tags: string[]
   }
   index: number
-  onEdit?: (entry: any) => void
+  onEdit?: (entry: JournalEntry) => void
 }
 
 

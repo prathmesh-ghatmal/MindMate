@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Heart} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/context/AuthProvider"
+import { useAuth } from "@/context/useAuth"
 
 
 interface DashboardHeaderProps {

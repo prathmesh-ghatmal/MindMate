@@ -1,4 +1,4 @@
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/context/useAuth";
 import { handleGoogleCallback } from "@/services/authService";
 import type React from "react";
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ interface CallbackResponse {
 const CallbackPage: React.FC = () => {
   const navigate = useNavigate();
   const {googlelogin} = useAuth()
+  
   useEffect(() => {
     const handleCallback = async () => {
       const params = new URLSearchParams(window.location.search);
@@ -80,7 +81,7 @@ const CallbackPage: React.FC = () => {
     };
 
     handleCallback();
-  }, [navigate]);
+  }, [navigate,googlelogin]);
 
   return <div>Logging you in with Google...</div>;
 };

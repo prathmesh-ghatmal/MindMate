@@ -9,6 +9,7 @@ import SidebarChatHistory from "@/components/chat/SidebarChatHistory" // ✅ You
 import { createConversation, deleteConversation, getAllConversations, renameConversation } from "@/services/conversationService"
 import { exportConversationAsPDF, getMessages, sendMessage, type SendMessageRequest } from "@/services/chatService"
 
+
 interface Message {
   id: string
   content: string
@@ -87,7 +88,7 @@ useEffect(() => {
   }
 
   create()
-}, [])
+}, [currrentConversationId])
 
   useEffect(() => {
     scrollToBottom()
