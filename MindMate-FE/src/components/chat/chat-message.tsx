@@ -13,7 +13,7 @@ interface ChatMessageProps {
   isLast: boolean
 }
 
-export default function ChatMessage({ message, isLast }: ChatMessageProps) {
+export default function ChatMessage({ message, isLast: _isLast }: ChatMessageProps) {
   const isAssistant = message.role === "assistant"
 
   return (

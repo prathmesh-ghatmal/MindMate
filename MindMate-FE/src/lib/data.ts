@@ -16,6 +16,16 @@ export interface MoodEntry {
   note?: string
 }
 
+export interface JournalEntry2 {
+  id: string;
+  title: string;
+  description: string;
+  mood: number;            // 1–5 mood rating from backend
+  tags: string[];
+  created_at: string;      // ISO date string
+}
+
+
 export interface JournalEntry {
   id: string
   title: string

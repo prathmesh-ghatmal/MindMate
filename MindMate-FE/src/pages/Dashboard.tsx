@@ -8,6 +8,7 @@ import { MessageCircle, BookOpen, Lightbulb, User } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { getAllMoodLogs, getLatestMoodLog } from "@/services/moodService"
 import { fetchUserProfile } from "@/services/authService"
+import type { MoodLog } from "./Profile"
 
 
 // Mock data - to be replaced with backend integration
@@ -16,9 +17,9 @@ import { fetchUserProfile } from "@/services/authService"
 //   lastMood: { emoji: "😊", value: 4, date: new Date() },
 //   streak: 7,
 // }
-
+const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
 export default function Dashboard() {
-  const moodEmojis = ["😔", "😢", "😐", "😁", "🤩"]
+  
   const [currentMood, setCurrentMood] = useState<{ emoji: string; value: number } | null>(null)
   const [name, setName] = useState<string>("")
   const [lastMood, setLastMood] = useState<{ emoji: string; value: number; date: Date } | null>(null)
@@ -43,7 +44,7 @@ export default function Dashboard() {
 
       const allLogs = await getAllMoodLogs()
       const uniqueDays = new Set(
-        allLogs.map((log: any) => new Date(log.created_at).toDateString())
+        allLogs.map((log: MoodLog) => new Date(log.created_at).toDateString())
       )
       setStreak(uniqueDays.size)
     } catch (err) {
@@ -93,7 +94,7 @@ export default function Dashboard() {
   })
   const allLogs = await getAllMoodLogs()
       const uniqueDays = new Set(
-        allLogs.map((log: any) => new Date(log.created_at).toDateString())
+        allLogs.map((log: MoodLog) => new Date(log.created_at).toDateString())
       )
       setStreak(uniqueDays.size)
 }

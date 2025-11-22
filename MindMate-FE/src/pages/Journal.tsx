@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import JournalEntry from "@/components/journal/journal-entry"
 import NewEntryModal from "@/components/journal/new-entry-modal"
 import { getAllJournalEntries } from "@/services/journalService"
+import type { JournalEntry2 } from "@/lib/data"
 
 // Mock journal entries - to be replaced with backend integration
 const mockEntries = [
@@ -50,7 +51,7 @@ export default function JournalPage() {
   const [entries, setEntries] = useState(mockEntries)
   const [loading, setLoading] = useState(true)
   const [showNewEntry, setShowNewEntry] = useState(false)
-  const [editingEntry, setEditingEntry] = useState(null)
+  const [editingEntry, setEditingEntry] = useState<JournalEntry2 | null>(null)
 
   const navigate = useNavigate()
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function JournalPage() {
     try {
       const data = await getAllJournalEntries()
       console.log("theses are entries",data)
-      const formattedEntries = data.map((entry: any) => {
+      const formattedEntries = data.map((entry: JournalEntry2) => {
   const moodIndex = entry.mood ? entry.mood - 1 : null;
   const mood =
     moodIndex !== null && moodEmojis[moodIndex]
@@ -162,10 +163,17 @@ console.log("hello",formattedEntries)
     entry={entry}
     index={index}
     onEdit={(entry) => {
-      console.log("this is entry",entry)
-      setEditingEntry(entry)
-      setShowNewEntry(true)
-    }}
+  setEditingEntry({
+    id: entry.id,
+    title: entry.title,
+    description: entry.content,
+    created_at: entry.date.toISOString(),
+    mood: entry.mood.value,
+    tags: entry.tags,
+  })
+  setShowNewEntry(true)
+}}
+
   />
 ))
 
@@ -180,7 +188,22 @@ console.log("hello",formattedEntries)
     setEditingEntry(null)
   }}
   onSave={handleNewEntry}
-  initialData={editingEntry}
+  initialData={
+  editingEntry
+    ? {
+        id: editingEntry.id,
+        title: editingEntry.title,
+        content: editingEntry.description,            // convert
+        mood: {
+          emoji: moodEmojis[editingEntry.mood - 1]?.emoji || "❓",
+          value: editingEntry.mood,
+        },
+        date: new Date(editingEntry.created_at),      // convert
+        tags: editingEntry.tags ?? [],
+      }
+    : null
+}
+
 />
     </div>
   )

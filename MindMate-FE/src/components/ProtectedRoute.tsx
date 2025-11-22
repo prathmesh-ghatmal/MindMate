@@ -1,6 +1,6 @@
 // src/components/ProtectedRoute.tsx
 import { Navigate } from "react-router-dom"
-import { useAuth } from "@/context/AuthProvider"
+import { useAuth } from "@/context/useAuth"
 import type { JSX } from "react"
 
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {

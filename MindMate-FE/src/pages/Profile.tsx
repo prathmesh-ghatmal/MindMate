@@ -3,16 +3,21 @@ import { ArrowLeft, User, Calendar, Award, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/context/AuthProvider"
+import { useAuth } from "@/context/useAuth"
 import { mockUser, mockMoodHistory, type MoodEntry } from "@/lib/data"
 import MoodGraph from "@/components/charts/mood-graph"
-import WallpaperSelector from "@/components/profile/wallpaper-selector"
 import {  useEffect, useState } from "react"
 import { fetchUserProfile } from "@/services/authService"
 import { getAllMoodLogs } from "@/services/moodService"
 import { updateUserProfile } from "@/services/userService"
 
-
+export interface MoodLog {
+  id: string
+  mood: number
+  created_at: string
+  note?: string
+ 
+}
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { logout } = useAuth()
@@ -27,8 +32,9 @@ export default function ProfilePage() {
       try {
         const profile = await fetchUserProfile()
         const allLogs = await getAllMoodLogs()
+        
        
-        const formattedEntries: MoodEntry[] = allLogs.map((entry: any) => ({
+        const formattedEntries: MoodEntry[] = allLogs.map((entry: MoodLog) => ({
   id: entry.id,
   mood: entry.mood,
   date: new Date(entry.created_at), // Convert string to Date object
@@ -36,7 +42,7 @@ export default function ProfilePage() {
  setMoodEntry(formattedEntries)
         console.log("Mood Entries:", formattedEntries)
               const uniqueDays = new Set(
-                allLogs.map((log: any) => new Date(log.created_at).toDateString())
+                allLogs.map((log: MoodLog) => new Date(log.created_at).toDateString())
               )
         setUserProfile({
           id: profile.id,
@@ -185,9 +191,7 @@ export default function ProfilePage() {
             </motion.div>
 
             {/* Wallpaper Selector */}
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-              <WallpaperSelector />
-            </motion.div>
+           
           </div>
 
           {/* Right Column - Charts and Stats */}
