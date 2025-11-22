@@ -13,6 +13,13 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
+    # ---------- TAILSCALE LOGIN ----------
+    - name: Install Tailscale
+      uses: tailscale/github-action@v2
+      with:
+        authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+        hostname: github-runner
+
     # ---------- FRONTEND ----------
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -38,13 +45,13 @@ jobs:
         target: "/home/hp/apps/mindmate-frontend/"
 
     # ---------- BACKEND ----------
+    
     - name: Install Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
-    # no need to install deps here, we install on WSL after copying
-    - name: Copy backend to WSL
+    - name: Copy backend
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
