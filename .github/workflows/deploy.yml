@@ -13,11 +13,13 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    # ---------- TAILSCALE LOGIN ----------
-    - name: Install Tailscale
+    # ---------- TAILSCALE LOGIN (FIXED) ----------
+    - name: Connect to Tailscale
       uses: tailscale/github-action@v2
       with:
-        authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+        oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+        oauth-client-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+        tags: ci
         hostname: github-runner
 
     # ---------- FRONTEND ----------
@@ -45,7 +47,6 @@ jobs:
         target: "/home/hp/apps/mindmate-frontend/"
 
     # ---------- BACKEND ----------
-    
     - name: Install Python
       uses: actions/setup-python@v4
       with:
