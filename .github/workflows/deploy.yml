@@ -13,12 +13,12 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    # ---------- TAILSCALE LOGIN (FIXED) ----------
+    # ---------- TAILSCALE LOGIN ----------
     - name: Connect to Tailscale
       uses: tailscale/github-action@v2
       with:
         oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+        oauth-client-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
         tags: tag:ci
         hostname: github-runner
 
@@ -36,7 +36,7 @@ jobs:
       working-directory: MindMate-FE
       run: npm run build
 
-    # ---------- COPY FRONTEND BUILD TO WSL ----------
+    # ---------- COPY FRONTEND BUILD ----------
     - name: Copy frontend build to WSL
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -52,13 +52,23 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Copy backend
+    # COPY ONLY BACKEND FOLDER CONTENT PROPERLY
+    - name: Copy backend to WSL (clean overwrite)
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        source: "MindMate-BE/*"
+        source: "MindMate-BE/app/*"
+        target: "/home/hp/apps/mindmate-backend/app/"
+
+    - name: Copy backend requirements
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        source: "MindMate-BE/requirements.txt"
         target: "/home/hp/apps/mindmate-backend/"
 
     # ---------- INSTALL DEPS + RESTART SERVICE ----------
