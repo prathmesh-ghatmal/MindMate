@@ -1,68 +1,59 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: sonar-scanner
+    image: sonarsource/sonar-scanner-cli
+    command: ["cat"]
+    tty: true
 
-    environment {
-        // URLs you provided
-        SONARQUBE_URL = "http://sonarqube.imcc.com"
-        NEXUS_URL = "nexus.imcc.com:8092"
+  - name: jnlp
+    image: jenkins/inbound-agent:3309.v27b_9314fd1a_4-1
+    env:
+    - name: JENKINS_AGENT_WORKDIR
+      value: "/home/jenkins/agent"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: workspace-volume
 
-        // Credential IDs
-        SONAR_TOKEN = credentials('mindmate-sonar-token')
-        NEXUS_CREDS = credentials('mindmate-nexus')
-
-        // Image names
-        BACKEND_IMAGE = "mindmate-backend"
-        FRONTEND_IMAGE = "mindmate-frontend"
+  volumes:
+  - name: workspace-volume
+    emptyDir: {}
+'''
+        }
     }
 
     stages {
 
+        stage('CHECK') {
+            steps {
+                echo ">>> SonarQube Pipeline Started for 2401055-Mindmate"
+            }
+        }
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/prathmesh-ghatmal/MindMate.git'
+                checkout scm
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SonarQube Scan') {
             steps {
-                script {
-                    def scanner = tool name: 'mindmate-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                    withSonarQubeEnv('mindmate-sonar') {
-                        sh """
-                            ${scanner}/bin/sonar-scanner \
-                              -Dsonar.projectKey=mindmate \
+                container('sonar-scanner') {
+                    withCredentials([string(credentialsId: 'mindmate-sonar-token', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                            sonar-scanner \
+                              -Dsonar.projectKey=2401055-Mindmate \
                               -Dsonar.sources=. \
-                              -Dsonar.java.binaries=. \
-                              -Dsonar.host.url=http://sonarqube.imcc.com
-                        """
+                              -Dsonar.host.url=http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000 \
+                              -Dsonar.login=$SONAR_TOKEN
+                        '''
                     }
                 }
-            }
-        }
-
-        stage('Build Backend Image') {
-            steps {
-                sh """
-                    docker build -t ${NEXUS_URL}/${BACKEND_IMAGE}:latest ./MindMate-BE
-                """
-            }
-        }
-
-        stage('Build Frontend Image') {
-            steps {
-                sh """
-                    docker build -t ${NEXUS_URL}/${FRONTEND_IMAGE}:latest ./MindMate-FE
-                """
-            }
-        }
-
-        stage('Push Images to Nexus') {
-            steps {
-                sh """
-                    echo "${NEXUS_CREDS_PSW}" | docker login ${NEXUS_URL} -u "${NEXUS_CREDS_USR}" --password-stdin
-                    docker push ${NEXUS_URL}/${BACKEND_IMAGE}:latest
-                    docker push ${NEXUS_URL}/${FRONTEND_IMAGE}:latest
-                """
             }
         }
 
