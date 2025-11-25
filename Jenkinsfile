@@ -6,7 +6,7 @@ pipeline {
         SONARQUBE_URL = "http://sonarqube.imcc.com"
         NEXUS_URL = "nexus.imcc.com:8092"
 
-        // Credential IDs you provided
+        // Credential IDs
         SONAR_TOKEN = credentials('mindmate-sonar-token')
         NEXUS_CREDS = credentials('mindmate-nexus')
 
@@ -23,34 +23,22 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         withSonarQubeEnv('mindmate-sonar') {
-        //             sh """
-        //                 sonar-scanner \
-        //                   -Dsonar.projectKey=mindmate \
-        //                   -Dsonar.sources=. \
-        //                   -Dsonar.host.url=${SONARQUBE_URL} \
-        //                   -Dsonar.login=${SONAR_TOKEN}
-        //             """
-        //         }
-        //     }
-        // }
-
         stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('mindmate-sonar') {
-            sh '''
-                $SONAR_SCANNER_HOME/bin/sonar-scanner \
-                  -Dsonar.projectKey=mindmate \
-                  -Dsonar.sources=. \
-                  -Dsonar.java.binaries=./ \
-                  -Dsonar.host.url=${SONARQUBE_URL}
-            '''
+            steps {
+                script {
+                    def scanner = tool name: 'mindmate-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv('mindmate-sonar') {
+                        sh """
+                            ${scanner}/bin/sonar-scanner \
+                              -Dsonar.projectKey=mindmate \
+                              -Dsonar.sources=. \
+                              -Dsonar.java.binaries=. \
+                              -Dsonar.host.url=http://sonarqube.imcc.com
+                        """
+                    }
+                }
+            }
         }
-    }
-}
-
 
         stage('Build Backend Image') {
             steps {
