@@ -23,19 +23,34 @@ pipeline {
             }
         }
 
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         withSonarQubeEnv('mindmate-sonar') {
+        //             sh """
+        //                 sonar-scanner \
+        //                   -Dsonar.projectKey=mindmate \
+        //                   -Dsonar.sources=. \
+        //                   -Dsonar.host.url=${SONARQUBE_URL} \
+        //                   -Dsonar.login=${SONAR_TOKEN}
+        //             """
+        //         }
+        //     }
+        // }
+
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('mindmate-sonar') {
-                    sh """
-                        sonar-scanner \
-                          -Dsonar.projectKey=mindmate \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=${SONARQUBE_URL} \
-                          -Dsonar.login=${SONAR_TOKEN}
-                    """
-                }
-            }
+    steps {
+        withSonarQubeEnv('mindmate-sonar') {
+            sh '''
+                $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                  -Dsonar.projectKey=mindmate \
+                  -Dsonar.sources=. \
+                  -Dsonar.java.binaries=./ \
+                  -Dsonar.host.url=${SONARQUBE_URL}
+            '''
         }
+    }
+}
+
 
         stage('Build Backend Image') {
             steps {
