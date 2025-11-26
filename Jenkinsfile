@@ -43,7 +43,7 @@ spec:
                             sonar-scanner \
                               -Dsonar.projectKey=local-client-server \
                               -Dsonar.sources=. \
-                              -Dsonar.host.url=http://localhost:9000 \
+                              -Dsonar.host.url=http://host.docker.internal:9000 \
                               -Dsonar.login=$SONAR_TOKEN
                         '''
                     }
