@@ -8,7 +8,8 @@ ENV PYTHONUNBUFFERED=1
 
 # install dependencies
 COPY MindMate-BE/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --timeout 100 -r requirements.txt
+
 
 # copy backend code
 COPY MindMate-BE/ .
