@@ -55,10 +55,7 @@ async def custom_validation_exception_handler(request, exc: RequestValidationErr
         }
     )
 
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+    
 
 app.include_router(auth.router)
 app.include_router(user.router)

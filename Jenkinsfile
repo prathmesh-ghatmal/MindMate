@@ -1,55 +1,72 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: sonar-scanner
-    image: sonarsource/sonar-scanner-cli
-    command: ["cat"]
-    tty: true
+  agent {
+    kubernetes {
+      defaultContainer 'jnlp'
+      yaml ''' (SAME POD YAML AS YOUR FRIEND) '''
+    }
+  }
 
-  - name: jnlp
-    image: jenkins/inbound-agent:3345.v03dee9b_f88fc-1
-    env:
-    - name: JENKINS_AGENT_WORKDIR
-      value: "/home/jenkins/agent"
-    volumeMounts:
-    - mountPath: "/home/jenkins/agent"
-      name: workspace-volume
+  environment {
+    REGISTRY = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
+    TAG = "v${BUILD_NUMBER}"
+    NAMESPACE = "2401055"
+  }
 
-  volumes:
-  - name: workspace-volume
-    emptyDir: {}
-'''
-        }
+  stages {
+
+    stage("Checkout") {
+      steps { checkout scm }
     }
 
-    stages {
-
-        stage('CHECK') {
-            steps {
-                echo "Kubernetes pod working... Running SonarQube Scan next."
-            }
+    stage("Sonar Scan") {
+      steps {
+        container("sonar") {
+          sh 'sonar-scanner'
         }
-
-        stage('SonarQube Scan') {
-            steps {
-                container('sonar-scanner') {
-                    withCredentials([string(credentialsId: 'mindmate-sonar', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                            sonar-scanner \
-                              -Dsonar.projectKey=local-client-server \
-                              -Dsonar.sources=. \
-                              -Dsonar.host.url=http://host.docker.internal:9000 \
-                              -Dsonar.login=$SONAR_TOKEN
-                        '''
-                    }
-                }
-            }
-        }
-
+      }
     }
+
+    stage("Build Backend Image") {
+      steps {
+        container("dind") {
+          sh '''
+            docker build -t mindmate-backend:$TAG -f MindMate-BE/Dockerfile .
+            docker tag mindmate-backend:$TAG $REGISTRY/2401069/mindmate-backend:$TAG
+            docker push $REGISTRY/2401069/mindmate-backend:$TAG
+          '''
+        }
+      }
+    }
+
+    stage("Build Frontend Image") {
+      steps {
+        container("dind") {
+          sh '''
+            docker build \
+              --build-arg VITE_API_URL=http://mindmate-backend:8000 \
+              -t mindmate-frontend:$TAG \
+              -f MindMate-FE/Dockerfile .
+
+            docker tag mindmate-frontend:$TAG $REGISTRY/2401069/mindmate-frontend:$TAG
+            docker push $REGISTRY/2401069/mindmate-frontend:$TAG
+          '''
+        }
+      }
+    }
+
+    stage("Deploy to Kubernetes") {
+      steps {
+        container("kubectl") {
+          sh '''
+            sed "s|IMAGE_TAG|$TAG|g" k8s/backend-deployment.yaml | kubectl apply -n $NAMESPACE -f -
+            sed "s|IMAGE_TAG|$TAG|g" k8s/frontend-deployment.yaml | kubectl apply -n $NAMESPACE -f -
+
+            kubectl apply -n $NAMESPACE -f k8s/backend-service.yaml
+            kubectl apply -n $NAMESPACE -f k8s/frontend-service.yaml
+            kubectl apply -n $NAMESPACE -f k8s/ingress.yaml
+          '''
+        }
+      }
+    }
+  }
 }
