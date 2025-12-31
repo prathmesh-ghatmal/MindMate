@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindmate-be
+  namespace: "2401055"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mindmate-be
+  template:
+    metadata:
+      labels:
+        app: mindmate-be
+    spec:
+      imagePullSecrets:
+        - name: nexus-secret
+      containers:
+        - name: backend
+          image: 127.0.0.1:30085/2401055/mindmate-be:BE_IMAGE_TAG
+          ports:
+            - containerPort: 8000

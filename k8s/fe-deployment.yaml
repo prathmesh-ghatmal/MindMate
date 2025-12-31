@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindmate-fe
+  namespace: "2401055"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mindmate-fe
+  template:
+    metadata:
+      labels:
+        app: mindmate-fe
+    spec:
+      imagePullSecrets:
+        - name: nexus-secret
+      containers:
+        - name: frontend
+          image: 127.0.0.1:30085/2401055/mindmate-fe:FE_IMAGE_TAG
+          ports:
+            - containerPort: 80

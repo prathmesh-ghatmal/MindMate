@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mindmate-frontend
+  name: mindmate-fe
+  namespace: "2401055"
 spec:
   selector:
-    app: mindmate-frontend
+    app: mindmate-fe
   ports:
     - port: 80
       targetPort: 80
