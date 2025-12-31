@@ -222,6 +222,26 @@ spec:
 
     TAG = "v${BUILD_NUMBER}"
     VITE_API_URL = "http://mindmate-api.imcc.com"
+     DATABASE_URL = credentials('DATABASE_URL')
+  SECRET_KEY = credentials('SECRET_KEY')
+  ALGORITHM = credentials('ALGORITHM')
+  ACCESS_TOKEN_EXPIRE_MINUTES = credentials('ACCESS_TOKEN_EXPIRE_MINUTES')
+  REFRESH_TOKEN_EXPIRE_DAYS = credentials('REFRESH_TOKEN_EXPIRE_DAYS')
+
+  MAIL_USERNAME = credentials('MAIL_USERNAME')
+  MAIL_PASSWORD = credentials('MAIL_PASSWORD')
+  MAIL_FROM = credentials('MAIL_FROM')
+  MAIL_PORT = credentials('MAIL_PORT')
+  MAIL_SERVER = credentials('MAIL_SERVER')
+  MAIL_TLS = credentials('MAIL_TLS')
+  MAIL_SSL = credentials('MAIL_SSL')
+
+  GOOGLE_CLIENT_ID = credentials('GOOGLE_CLIENT_ID')
+  GOOGLE_CLIENT_SECRET = credentials('GOOGLE_CLIENT_SECRET')
+  GOOGLE_REDIRECT_URI = credentials('GOOGLE_REDIRECT_URI')
+
+  OPENAI_API_KEY = credentials('OPENAI_API_KEY')
+  CHAT_ENCRYPTION_KEY = credentials('CHAT_ENCRYPTION_KEY')
   }
 
   stages {
@@ -284,55 +304,32 @@ spec:
     stage("Create / Update Kubernetes Secrets") {
   steps {
     container("kubectl") {
-      withCredentials([
-        string(credentialsId: 'DATABASE_URL', variable: 'DATABASE_URL'),
-        string(credentialsId: 'SECRET_KEY', variable: 'SECRET_KEY'),
-        string(credentialsId: 'ALGORITHM', variable: 'ALGORITHM'),
-        string(credentialsId: 'ACCESS_TOKEN_EXPIRE_MINUTES', variable: 'ACCESS_TOKEN_EXPIRE_MINUTES'),
-        string(credentialsId: 'REFRESH_TOKEN_EXPIRE_DAYS', variable: 'REFRESH_TOKEN_EXPIRE_DAYS'),
-
-        string(credentialsId: 'MAIL_USERNAME', variable: 'MAIL_USERNAME'),
-        string(credentialsId: 'MAIL_PASSWORD', variable: 'MAIL_PASSWORD'),
-        string(credentialsId: 'MAIL_PASSWORD', variable: 'MAIL_PASSWORD'),
-        string(credentialsId: 'MAIL_FROM', variable: 'MAIL_FROM'),
-        string(credentialsId: 'MAIL_PORT', variable: 'MAIL_PORT'),
-        string(credentialsId: 'MAIL_SERVER', variable: 'MAIL_SERVER'),
-        string(credentialsId: 'MAIL_TLS', variable: 'MAIL_TLS'),
-        string(credentialsId: 'MAIL_SSL', variable: 'MAIL_SSL'),
-
-        string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-        string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
-        string(credentialsId: 'GOOGLE_REDIRECT_URI', variable: 'GOOGLE_REDIRECT_URI'),
-
-        string(credentialsId: 'OPENAI_API_KEY', variable: 'OPENAI_API_KEY'),
-        string(credentialsId: 'CHAT_ENCRYPTION_KEY', variable: 'CHAT_ENCRYPTION_KEY')
-      ]) {
-        sh '''
-          kubectl create secret generic mindmate-secrets \
-            -n 2401055 \
-            --from-literal=DATABASE_URL="$DATABASE_URL" \
-            --from-literal=SECRET_KEY="$SECRET_KEY" \
-            --from-literal=ALGORITHM="$ALGORITHM" \
-            --from-literal=ACCESS_TOKEN_EXPIRE_MINUTES="$ACCESS_TOKEN_EXPIRE_MINUTES" \
-            --from-literal=REFRESH_TOKEN_EXPIRE_DAYS="$REFRESH_TOKEN_EXPIRE_DAYS" \
-            --from-literal=MAIL_USERNAME="$MAIL_USERNAME" \
-            --from-literal=MAIL_PASSWORD="$MAIL_PASSWORD" \
-            --from-literal=MAIL_FROM="$MAIL_FROM" \
-            --from-literal=MAIL_PORT="$MAIL_PORT" \
-            --from-literal=MAIL_SERVER="$MAIL_SERVER" \
-            --from-literal=MAIL_TLS="$MAIL_TLS" \
-            --from-literal=MAIL_SSL="$MAIL_SSL" \
-            --from-literal=GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
-            --from-literal=GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
-            --from-literal=GOOGLE_REDIRECT_URI="$GOOGLE_REDIRECT_URI" \
-            --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
-            --from-literal=CHAT_ENCRYPTION_KEY="$CHAT_ENCRYPTION_KEY" \
-            --dry-run=client -o yaml | kubectl apply -f -
-        '''
-      }
+      sh '''
+        kubectl create secret generic mindmate-secrets \
+          -n 2401055 \
+          --from-literal=DATABASE_URL="$DATABASE_URL" \
+          --from-literal=SECRET_KEY="$SECRET_KEY" \
+          --from-literal=ALGORITHM="$ALGORITHM" \
+          --from-literal=ACCESS_TOKEN_EXPIRE_MINUTES="$ACCESS_TOKEN_EXPIRE_MINUTES" \
+          --from-literal=REFRESH_TOKEN_EXPIRE_DAYS="$REFRESH_TOKEN_EXPIRE_DAYS" \
+          --from-literal=MAIL_USERNAME="$MAIL_USERNAME" \
+          --from-literal=MAIL_PASSWORD="$MAIL_PASSWORD" \
+          --from-literal=MAIL_FROM="$MAIL_FROM" \
+          --from-literal=MAIL_PORT="$MAIL_PORT" \
+          --from-literal=MAIL_SERVER="$MAIL_SERVER" \
+          --from-literal=MAIL_TLS="$MAIL_TLS" \
+          --from-literal=MAIL_SSL="$MAIL_SSL" \
+          --from-literal=GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
+          --from-literal=GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+          --from-literal=GOOGLE_REDIRECT_URI="$GOOGLE_REDIRECT_URI" \
+          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
+          --from-literal=CHAT_ENCRYPTION_KEY="$CHAT_ENCRYPTION_KEY" \
+          --dry-run=client -o yaml | kubectl apply -f -
+      '''
     }
   }
 }
+
 
 
 
