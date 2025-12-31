@@ -20,3 +20,109 @@ spec:
           image: 127.0.0.1:30085/prathmesh/mindmate-2401055-be:latest
           ports:
             - containerPort: 8000
+          env:
+            # Core
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: DATABASE_URL
+
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: SECRET_KEY
+
+            - name: ALGORITHM
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: ALGORITHM
+
+            - name: ACCESS_TOKEN_EXPIRE_MINUTES
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: ACCESS_TOKEN_EXPIRE_MINUTES
+
+            - name: REFRESH_TOKEN_EXPIRE_DAYS
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: REFRESH_TOKEN_EXPIRE_DAYS
+
+            # Email
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_USERNAME
+
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_PASSWORD
+
+            - name: MAIL_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_FROM
+
+            - name: MAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_PORT
+
+            - name: MAIL_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_SERVER
+
+            - name: MAIL_TLS
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_TLS
+
+            - name: MAIL_SSL
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: MAIL_SSL
+
+            # Google OAuth
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: GOOGLE_CLIENT_ID
+
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: GOOGLE_CLIENT_SECRET
+
+            - name: GOOGLE_REDIRECT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: GOOGLE_REDIRECT_URI
+
+            # OpenAI
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: OPENAI_API_KEY
+
+            - name: CHAT_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mindmate-secrets
+                  key: CHAT_ENCRYPTION_KEY
