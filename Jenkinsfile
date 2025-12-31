@@ -19,7 +19,7 @@ spec:
       - name: DOCKER_TLS_CERTDIR
         value: ""
     args:
-      - "--insecure-registry=127.0.0.1:30085"
+      - "--insecure-registry=nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
     workingDir: /home/jenkins/agent
 
   - name: kubectl
@@ -48,7 +48,7 @@ spec:
   }
 
   environment {
-    REGISTRY = "127.0.0.1:30085"
+    REGISTRY = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
 
     FE_IMAGE = "2401055/mindmate-fe"
     BE_IMAGE = "2401055/mindmate-be"
@@ -103,7 +103,7 @@ spec:
       steps {
         container("dind") {
           sh '''
-            docker login 127.0.0.1:30085 -u admin -p Changeme@2025
+            docker login $REGISTRY -u admin -p Changeme@2025
 
             docker tag $FE_IMAGE:$TAG $REGISTRY/$FE_IMAGE:$TAG
             docker push $REGISTRY/$FE_IMAGE:$TAG
