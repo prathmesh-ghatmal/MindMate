@@ -26,6 +26,7 @@ spec:
     image: bitnami/kubectl:latest
     command: ["cat"]
     tty: true
+    workingDir: /home/jenkins/agent
     env:
       - name: KUBECONFIG
         value: /kube/config
