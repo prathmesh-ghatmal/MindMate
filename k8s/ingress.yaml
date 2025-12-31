@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mindmate-ingress
+  name: mindmate-ingress-v2
   namespace: "2401055"
 spec:
   rules:
-    - host: mindmate.college.local
+    - host: mindmate.imcc.com
       http:
         paths:
           - path: /
@@ -16,7 +16,7 @@ spec:
                 port:
                   number: 80
 
-    - host: mindmate-api.college.local
+    - host: mindmate-api.imcc.com
       http:
         paths:
           - path: /
