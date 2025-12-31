@@ -31,6 +31,8 @@ spec:
       - name: KUBECONFIG
         value: /kube/config
     volumeMounts:
+      - name: workspace                # ✅ THIS WAS MISSING
+        mountPath: /home/jenkins/agent 
       - name: kubeconfig-secret
         mountPath: /kube/config
         subPath: kubeconfig
@@ -122,6 +124,7 @@ spec:
       steps {
         container("kubectl") {
           sh """
+
             kubectl apply -f k8s/fe-service.yaml
             kubectl apply -f k8s/be-service.yaml
             kubectl apply -f k8s/ingress.yaml
