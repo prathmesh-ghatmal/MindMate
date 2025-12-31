@@ -6,10 +6,10 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-COPY MindMate-BE/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir --timeout 100 -r requirements.txt
 
-COPY MindMate-BE/ .
+#COPY MindMate-BE/ .
 
 EXPOSE 8000
 
