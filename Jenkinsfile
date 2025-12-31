@@ -31,6 +31,8 @@ spec:
       - name: KUBECONFIG
         value: /kube/config
     volumeMounts:
+      - name: workspace
+        mountPath: /home/jenkins/agent
       - name: kubeconfig-secret
         mountPath: /kube/config
         subPath: kubeconfig
