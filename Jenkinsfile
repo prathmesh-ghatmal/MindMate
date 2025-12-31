@@ -221,7 +221,7 @@ spec:
     BE_IMAGE = "2401055/mindmate-be"
 
     TAG = "v${BUILD_NUMBER}"
-    VITE_API_URL = "http://mindmate-api.college.local"
+    VITE_API_URL = "http://mindmate-api.imcc.com"
   }
 
   stages {
