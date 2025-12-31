@@ -246,7 +246,7 @@ spec:
           sh '''
             docker build \
               --build-arg VITE_API_URL=$VITE_API_URL \
-              -t $FE_IMAGE:$TAG \
+              -t mindmate-2401055-fe:latest \
               -f MindMate-FE/Dockerfile .
           '''
         }
@@ -258,7 +258,7 @@ spec:
         container("dind") {
           sh '''
             docker build \
-              -t $BE_IMAGE:$TAG \
+              -t mindmate-2401055-be:latest \
               -f MindMate-BE/Dockerfile .
           '''
         }
@@ -271,11 +271,11 @@ spec:
           sh '''
             docker login $REGISTRY -u admin -p Changeme@2025
 
-            docker tag $FE_IMAGE:$TAG $REGISTRY/$FE_IMAGE:$TAG
-            docker push $REGISTRY/$FE_IMAGE:$TAG
+            docker tag mindmate-2401055-fe:latest $REGISTRY/prathmesh/mindmate-2401055-fe:latest
+            docker push $REGISTRY/prathmesh/mindmate-2401055-fe:latest
 
-            docker tag $BE_IMAGE:$TAG $REGISTRY/$BE_IMAGE:$TAG
-            docker push $REGISTRY/$BE_IMAGE:$TAG
+            docker tag mindmate-2401055-be:latest $REGISTRY/prathmesh/mindmate-2401055-be:latest
+            docker push $REGISTRY/prathmesh/mindmate-2401055-be:latest
           '''
         }
       }

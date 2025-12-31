@@ -17,6 +17,6 @@ spec:
         - name: nexus-secret
       containers:
         - name: frontend
-          image: nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085/2401055/mindmate-fe:{{TAG}}
+          image: 127.0.0.1:30085/prathmesh/mindmate-2401055-fe:latest
           ports:
             - containerPort: 80
