@@ -31,8 +31,6 @@ spec:
       - name: KUBECONFIG
         value: /kube/config
     volumeMounts:
-      - name: workspace
-        mountPath: /home/jenkins/agent
       - name: kubeconfig-secret
         mountPath: /kube/config
         subPath: kubeconfig
@@ -123,15 +121,19 @@ spec:
     stage("Deploy to Kubernetes") {
       steps {
         container("kubectl") {
-          sh """
-
-            kubectl apply -f k8s/fe-service.yaml
-            kubectl apply -f k8s/be-service.yaml
-            kubectl apply -f k8s/ingress.yaml
-          """
-        }
+        dir("k8s") {
+        sh '''
+          kubectl apply -f fe-deployment.yaml
+          kubectl apply -f be-deployment.yaml
+          kubectl apply -f fe-service.yaml
+          kubectl apply -f be-service.yaml
+          kubectl apply -f ingress.yaml
+        '''
       }
     }
+  }
+}
+
 
     stage("Verify Deployment") {
       steps {
