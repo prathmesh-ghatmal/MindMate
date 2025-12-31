@@ -1,54 +1,52 @@
 pipeline {
-  agent {
-    kubernetes {
-      defaultContainer 'jnlp'
-      yaml '''
+    agent {
+        kubernetes {
+            yaml '''
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: jnlp
-    image: jenkins/inbound-agent:alpine-jdk17
-    workingDir: /home/jenkins/agent
-
+  - name: sonar-scanner
+    image: sonarsource/sonar-scanner-cli
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command:
+    - cat
+    tty: true
+    securityContext:
+      runAsUser: 0
+      readOnlyRootFilesystem: false
+    env:
+    - name: KUBECONFIG
+      value: /kube/config        
+    volumeMounts:
+    - name: kubeconfig-secret
+      mountPath: /kube/config
+      subPath: kubeconfig
   - name: dind
     image: docker:dind
     securityContext:
-      privileged: true
+      privileged: true  # Needed to run Docker daemon
     env:
-      - name: DOCKER_TLS_CERTDIR
-        value: ""
-    args:
-      - "--insecure-registry=nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
-    workingDir: /home/jenkins/agent
-
-  - name: kubectl
-    image: bitnami/kubectl:latest
-    command: ["cat"]
-    tty: true
-    workingDir: /home/jenkins/agent
-    env:
-      - name: KUBECONFIG
-        value: /kube/config
+    - name: DOCKER_TLS_CERTDIR
+      value: ""  # Disable TLS for simplicity
     volumeMounts:
-      - name: workspace                # ✅ THIS WAS MISSING
-        mountPath: /home/jenkins/agent 
-      - name: kubeconfig-secret
-        mountPath: /kube/config
-        subPath: kubeconfig
-
-  - name: sonar
-    image: sonarsource/sonar-scanner-cli:latest
-    command: ["cat"]
-    tty: true
-
+    - name: docker-config
+      mountPath: /etc/docker/daemon.json
+      subPath: daemon.json  # Mount the file directly here
   volumes:
+  - name: docker-config
+    configMap:
+      name: docker-daemon-config
   - name: kubeconfig-secret
     secret:
       secretName: kubeconfig-secret
 '''
+        }
     }
-  }
 
   environment {
     REGISTRY = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
