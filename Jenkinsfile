@@ -122,9 +122,6 @@ spec:
       steps {
         container("kubectl") {
           sh """
-            sed 's|FE_IMAGE_TAG|$TAG|g' k8s/fe-deployment.yaml | kubectl apply -f -
-            sed 's|BE_IMAGE_TAG|$TAG|g' k8s/be-deployment.yaml | kubectl apply -f -
-
             kubectl apply -f k8s/fe-service.yaml
             kubectl apply -f k8s/be-service.yaml
             kubectl apply -f k8s/ingress.yaml
