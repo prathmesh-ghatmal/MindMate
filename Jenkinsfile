@@ -284,6 +284,7 @@ spec:
     stage("Deploy to Kubernetes") {
       steps {
         container("kubectl") {
+          script{
           dir("k8s") {
             sh '''
               kubectl apply -f fe-deployment.yaml
@@ -295,6 +296,7 @@ spec:
           }
         }
       }
+    }
     }
 
     stage("Verify Deployment") {
