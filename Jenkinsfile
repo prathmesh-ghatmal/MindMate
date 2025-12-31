@@ -287,6 +287,9 @@ spec:
           script{
           dir("k8s") {
             sh '''
+              echo "Injecting image tag: $TAG"
+              sed -i "s/{{TAG}}/$TAG/g" fe-deployment.yaml
+              sed -i "s/{{TAG}}/$TAG/g" be-deployment.yaml
               kubectl apply -f fe-deployment.yaml
               kubectl apply -f be-deployment.yaml
               kubectl apply -f fe-service.yaml
