@@ -116,15 +116,7 @@ spec:
       }
     }
 
-    stage("Ensure Namespace Exists") {
-      steps {
-        container("kubectl") {
-          sh '''
-            kubectl get namespace 2401055 || kubectl create namespace 2401055
-          '''
-        }
-      }
-    }
+    
 
     stage("Deploy to Kubernetes") {
       steps {
